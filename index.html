@@ -1,0 +1,2278 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>과외쌤 관리</title>
+
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: Arial, "Noto Sans KR", sans-serif;
+                background: #f4f6f8;
+                color: #222;
+            }
+
+            button,
+            input,
+            select,
+            textarea {
+                font: inherit;
+            }
+
+            button {
+                cursor: pointer;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            /* 로그인 / 회원가입 */
+            .auth-container {
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .auth-box {
+                width: 420px;
+                max-width: 100%;
+                background: white;
+                padding: 40px;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+                margin: 0 auto 20px;
+                border-radius: 50%;
+                background: #eef4ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+            }
+
+            .auth-title {
+                text-align: center;
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+
+            .auth-subtitle {
+                text-align: center;
+                color: #777;
+                margin-bottom: 30px;
+                font-size: 14px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-group label {
+                display: block;
+                margin-bottom: 7px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .input-group input,
+            .input-group select,
+            .input-group textarea {
+                width: 100%;
+                padding: 12px 14px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                outline: none;
+                background: white;
+            }
+
+            .input-group input,
+            .input-group select {
+                height: 46px;
+            }
+
+            .input-group textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
+
+            .input-group input:focus,
+            .input-group select:focus,
+            .input-group textarea:focus {
+                border-color: #4f7cff;
+            }
+
+            .main-button {
+                width: 100%;
+                height: 48px;
+                border: 0;
+                border-radius: 8px;
+                background: #4f7cff;
+                color: white;
+                font-weight: bold;
+            }
+
+            .main-button:hover {
+                background: #3d68e8;
+            }
+
+            .bottom-text {
+                text-align: center;
+                color: #777;
+                margin-top: 20px;
+                font-size: 14px;
+            }
+
+            .link-button {
+                color: #4f7cff;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .error {
+                min-height: 18px;
+                color: #e74c3c;
+                font-size: 13px;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            /* 대시보드 */
+            .dashboard {
+                min-height: 100vh;
+            }
+
+            .top-header {
+                height: 70px;
+                background: white;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 30px;
+            }
+
+            .site-title {
+                font-size: 21px;
+                font-weight: bold;
+            }
+
+            .user-area {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .user-name {
+                color: #555;
+                font-size: 14px;
+            }
+
+            .logout-button {
+                height: 36px;
+                padding: 0 14px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 8px;
+            }
+
+            .menu {
+                background: white;
+                border-bottom: 1px solid #eee;
+                padding: 10px 25px;
+                display: flex;
+                gap: 7px;
+                overflow-x: auto;
+            }
+
+            .menu-button {
+                border: 0;
+                background: white;
+                color: #555;
+                border-radius: 8px;
+                height: 42px;
+                padding: 0 14px;
+                white-space: nowrap;
+            }
+
+            .menu-button:hover,
+            .menu-button.active {
+                background: #eef4ff;
+                color: #4f7cff;
+            }
+
+            .content {
+                max-width: 1200px;
+                margin: auto;
+                padding: 30px;
+            }
+
+            .page-title {
+                font-size: 24px;
+                margin-bottom: 22px;
+            }
+
+            .cards {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+            }
+
+            .card {
+                background: white;
+                padding: 22px;
+                border-radius: 12px;
+                box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            .card-title {
+                color: #777;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .card-number {
+                font-size: 27px;
+                font-weight: bold;
+            }
+
+            .form-box {
+                background: white;
+                padding: 22px;
+                border-radius: 12px;
+                margin-bottom: 25px;
+                box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .form-full {
+                grid-column: 1 / -1;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin: 24px 0 12px;
+            }
+
+            .list-box {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .list-item {
+                background: white;
+                padding: 18px;
+                border-radius: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
+                box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            .item-info {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .item-name {
+                font-size: 17px;
+                font-weight: bold;
+            }
+
+            .item-detail {
+                color: #777;
+                font-size: 14px;
+            }
+
+            .item-actions {
+                display: flex;
+                gap: 7px;
+                flex-wrap: wrap;
+            }
+
+            .delete-button,
+            .small-button {
+                height: 36px;
+                padding: 0 12px;
+                border: 0;
+                border-radius: 7px;
+            }
+
+            .delete-button {
+                background: #e74c3c;
+                color: white;
+            }
+
+            .small-button {
+                background: #eef4ff;
+                color: #4f7cff;
+            }
+
+            .empty-message {
+                background: white;
+                padding: 35px;
+                text-align: center;
+                color: #888;
+                border-radius: 12px;
+            }
+
+            .status {
+                display: inline-block;
+                padding: 4px 9px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            .status-ok {
+                background: #e9f8ef;
+                color: #1f8b4c;
+            }
+
+            .status-wait {
+                background: #fff4dd;
+                color: #a66a00;
+            }
+
+            .status-late {
+                background: #ffe8e8;
+                color: #c0392b;
+            }
+
+            .report-box {
+                background: white;
+                padding: 25px;
+                border-radius: 12px;
+                line-height: 1.7;
+                box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            .report-header {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 18px;
+                margin-bottom: 18px;
+            }
+
+            .report-section {
+                margin-top: 20px;
+            }
+
+            .report-section h3 {
+                margin-bottom: 8px;
+            }
+
+            .report-note {
+                background: #f7f8fa;
+                padding: 15px;
+                border-radius: 8px;
+                white-space: pre-wrap;
+            }
+
+            .money {
+                font-weight: bold;
+            }
+
+            @media (max-width: 800px) {
+                .cards {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-full {
+                    grid-column: auto;
+                }
+
+                .content {
+                    padding: 20px;
+                }
+            }
+
+            @media (max-width: 500px) {
+                .cards {
+                    grid-template-columns: 1fr;
+                }
+
+                .auth-box {
+                    padding: 25px;
+                }
+
+                .top-header {
+                    padding: 0 15px;
+                }
+
+                .user-name {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- ==================== 로그인 / 회원가입 ==================== -->
+        <div class="auth-container" id="authContainer">
+            <div class="auth-box" id="loginBox">
+                <div class="logo">🧑‍🏫</div>
+
+                <h1 class="auth-title">과외쌤 관리</h1>
+                <p class="auth-subtitle">선생님을 위한 과외 관리 서비스</p>
+
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label>이메일</label>
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="이메일을 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <label>비밀번호</label>
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="비밀번호를 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <p class="error" id="loginError"></p>
+
+                    <button class="main-button" type="submit">로그인</button>
+                </form>
+
+                <div class="bottom-text">
+                    아직 계정이 없으신가요?
+                    <span class="link-button" id="goSignup">회원가입</span>
+                </div>
+            </div>
+
+            <div class="auth-box hidden" id="signupBox">
+                <div class="logo">✏️</div>
+
+                <h1 class="auth-title">회원가입</h1>
+                <p class="auth-subtitle">과외쌤 관리 서비스를 시작해보세요</p>
+
+                <form id="signupForm">
+                    <div class="input-group">
+                        <label>이름</label>
+                        <input
+                            type="text"
+                            id="signupName"
+                            placeholder="이름을 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <label>이메일</label>
+                        <input
+                            type="email"
+                            id="signupEmail"
+                            placeholder="이메일을 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <label>비밀번호</label>
+                        <input
+                            type="password"
+                            id="signupPassword"
+                            placeholder="비밀번호를 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <label>비밀번호 확인</label>
+                        <input
+                            type="password"
+                            id="signupPasswordConfirm"
+                            placeholder="비밀번호를 다시 입력하세요"
+                            required
+                        />
+                    </div>
+
+                    <p class="error" id="signupError"></p>
+
+                    <button class="main-button" type="submit">회원가입</button>
+                </form>
+
+                <div class="bottom-text">
+                    이미 계정이 있으신가요?
+                    <span class="link-button" id="goLogin">로그인</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 대시보드 ==================== -->
+        <div class="dashboard hidden" id="dashboard">
+            <header class="top-header">
+                <div class="site-title">🧑‍🏫 과외쌤 관리</div>
+
+                <div class="user-area">
+                    <span class="user-name" id="userName"></span>
+                    <button class="logout-button" id="logoutButton">
+                        로그아웃
+                    </button>
+                </div>
+            </header>
+
+            <!-- 메뉴 -->
+            <nav class="menu">
+                <button class="menu-button active" id="dashboardMenu">
+                    🏠 대시보드
+                </button>
+
+                <button class="menu-button" id="studentMenu">
+                    👨‍🎓 학생 관리
+                </button>
+
+                <button class="menu-button" id="scheduleMenu">
+                    📅 수업 일정
+                </button>
+
+                <!-- 새로 추가한 수업 기록 메뉴 -->
+                <button class="menu-button" id="lessonRecordMenu">
+                    📖 수업 기록
+                </button>
+
+                <button class="menu-button" id="homeworkMenu">
+                    📚 숙제 관리
+                </button>
+
+                <button class="menu-button" id="reportMenu">
+                    📊 학부모 리포트
+                </button>
+
+                <button class="menu-button" id="paymentMenu">
+                    💰 결제 관리
+                </button>
+            </nav>
+
+            <main class="content">
+                <!-- ==================== 대시보드 ==================== -->
+                <section id="dashboardPage">
+                    <h2 class="page-title">오늘의 현황</h2>
+
+                    <div class="cards">
+                        <div class="card">
+                            <p class="card-title">👨‍🎓 관리 학생</p>
+                            <p class="card-number" id="studentCount">0명</p>
+                        </div>
+
+                        <div class="card">
+                            <p class="card-title">📅 오늘의 수업</p>
+                            <p class="card-number" id="todayScheduleCount">
+                                0개
+                            </p>
+                        </div>
+
+                        <div class="card">
+                            <p class="card-title">📚 미제출 숙제</p>
+                            <p class="card-number" id="pendingHomeworkCount">
+                                0개
+                            </p>
+                        </div>
+
+                        <div class="card">
+                            <p class="card-title">💰 미납 결제</p>
+                            <p class="card-number" id="unpaidPaymentCount">
+                                0건
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== 학생 관리 ==================== -->
+                <section id="studentPage" class="hidden">
+                    <h2 class="page-title">👨‍🎓 학생 관리</h2>
+
+                    <div class="form-box">
+                        <form id="studentForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생 이름</label>
+                                    <input
+                                        type="text"
+                                        id="studentName"
+                                        placeholder="예: 김민수"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>과목</label>
+                                    <input
+                                        type="text"
+                                        id="studentSubject"
+                                        placeholder="예: 수학"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>학교</label>
+                                    <input
+                                        type="text"
+                                        id="studentSchool"
+                                        placeholder="예: ○○중학교"
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>연락처</label>
+                                    <input
+                                        type="text"
+                                        id="studentPhone"
+                                        placeholder="예: 010-0000-0000"
+                                    />
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        학생 추가
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">등록된 학생</h3>
+
+                    <div class="list-box" id="studentList"></div>
+                </section>
+
+                <!-- ==================== 수업 일정 ==================== -->
+                <section id="schedulePage" class="hidden">
+                    <h2 class="page-title">📅 수업 일정</h2>
+
+                    <div class="form-box">
+                        <form id="scheduleForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생</label>
+                                    <select
+                                        id="scheduleStudent"
+                                        required
+                                    ></select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>과목</label>
+                                    <input
+                                        type="text"
+                                        id="scheduleSubject"
+                                        placeholder="예: 수학"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>날짜</label>
+                                    <input
+                                        type="date"
+                                        id="scheduleDate"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>시간</label>
+                                    <input
+                                        type="time"
+                                        id="scheduleTime"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        수업 등록
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">등록된 수업</h3>
+
+                    <div class="list-box" id="scheduleList"></div>
+                </section>
+
+                <!-- ==================== 수업 기록 ==================== -->
+                <section id="lessonRecordPage" class="hidden">
+                    <h2 class="page-title">📖 수업 기록</h2>
+
+                    <div class="form-box">
+                        <form id="lessonRecordForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생</label>
+                                    <select
+                                        id="lessonRecordStudent"
+                                        required
+                                    ></select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>수업 날짜</label>
+                                    <input
+                                        type="date"
+                                        id="lessonRecordDate"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>과목</label>
+                                    <input
+                                        type="text"
+                                        id="lessonRecordSubject"
+                                        placeholder="예: 수학"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>이해도</label>
+                                    <select id="lessonRecordUnderstanding">
+                                        <option value="매우 좋음">
+                                            매우 좋음
+                                        </option>
+                                        <option value="좋음">좋음</option>
+                                        <option value="보통">보통</option>
+                                        <option value="노력 필요">
+                                            노력 필요
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-full input-group">
+                                    <label>오늘 배운 내용</label>
+                                    <textarea
+                                        id="lessonRecordContent"
+                                        placeholder="오늘 수업에서 배운 내용을 입력하세요."
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div class="form-full input-group">
+                                    <label>선생님 메모</label>
+                                    <textarea
+                                        id="lessonRecordMemo"
+                                        placeholder="학생의 강점, 부족한 부분, 다음 수업에서 할 내용 등을 입력하세요."
+                                    ></textarea>
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        수업 기록 저장
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">저장된 수업 기록</h3>
+
+                    <div class="list-box" id="lessonRecordList"></div>
+                </section>
+
+                <!-- ==================== 숙제 관리 ==================== -->
+                <section id="homeworkPage" class="hidden">
+                    <h2 class="page-title">📚 숙제 관리</h2>
+
+                    <div class="form-box">
+                        <form id="homeworkForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생</label>
+                                    <select
+                                        id="homeworkStudent"
+                                        required
+                                    ></select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>숙제 제목</label>
+                                    <input
+                                        type="text"
+                                        id="homeworkTitle"
+                                        placeholder="예: 수학 문제집 20~30번"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>마감일</label>
+                                    <input
+                                        type="date"
+                                        id="homeworkDueDate"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>설명</label>
+                                    <input
+                                        type="text"
+                                        id="homeworkDescription"
+                                        placeholder="숙제 내용을 입력하세요"
+                                    />
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        숙제 등록
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">숙제 목록</h3>
+
+                    <div class="list-box" id="homeworkList"></div>
+                </section>
+
+                <!-- ==================== 학부모 리포트 ==================== -->
+                <section id="reportPage" class="hidden">
+                    <h2 class="page-title">📊 학부모 리포트</h2>
+
+                    <div class="form-box">
+                        <form id="reportForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생</label>
+                                    <select
+                                        id="reportStudent"
+                                        required
+                                    ></select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>수업 날짜</label>
+                                    <input
+                                        type="date"
+                                        id="reportDate"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>학습 주제</label>
+                                    <input
+                                        type="text"
+                                        id="reportTopic"
+                                        placeholder="예: 이차방정식"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>학습 평가</label>
+                                    <select id="reportEvaluation" required>
+                                        <option value="매우 좋음">
+                                            매우 좋음
+                                        </option>
+                                        <option value="좋음">좋음</option>
+                                        <option value="보통">보통</option>
+                                        <option value="노력 필요">
+                                            노력 필요
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-full input-group">
+                                    <label>선생님 메모</label>
+                                    <textarea
+                                        id="reportMemo"
+                                        placeholder="학생의 학습 내용, 강점, 보완할 점 등을 입력하세요"
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        리포트 저장
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">저장된 리포트</h3>
+
+                    <div class="list-box" id="reportList"></div>
+                </section>
+
+                <!-- ==================== 결제 관리 ==================== -->
+                <section id="paymentPage" class="hidden">
+                    <h2 class="page-title">💰 결제 관리</h2>
+
+                    <div class="form-box">
+                        <form id="paymentForm">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label>학생</label>
+                                    <select
+                                        id="paymentStudent"
+                                        required
+                                    ></select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>결제 금액</label>
+                                    <input
+                                        type="number"
+                                        id="paymentAmount"
+                                        placeholder="예: 300000"
+                                        min="0"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>결제 예정일</label>
+                                    <input
+                                        type="date"
+                                        id="paymentDueDate"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="input-group">
+                                    <label>상태</label>
+                                    <select id="paymentStatus">
+                                        <option value="미납">미납</option>
+                                        <option value="결제완료">
+                                            결제완료
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-full">
+                                    <button class="main-button" type="submit">
+                                        결제 등록
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="section-title">결제 내역</h3>
+
+                    <div class="list-box" id="paymentList"></div>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            /* =========================================================
+   기본 변수
+========================================================= */
+
+            let currentUser = null;
+
+            const authContainer = document.getElementById("authContainer");
+            const loginBox = document.getElementById("loginBox");
+            const signupBox = document.getElementById("signupBox");
+            const dashboard = document.getElementById("dashboard");
+
+            const pages = [
+                "dashboardPage",
+                "studentPage",
+                "schedulePage",
+                "lessonRecordPage",
+                "homeworkPage",
+                "reportPage",
+                "paymentPage",
+            ];
+
+            /* =========================================================
+   로그인한 선생님별 데이터 저장
+========================================================= */
+
+            function userKey(prefix) {
+                return prefix + "_" + currentUser.email;
+            }
+
+            function getData(prefix) {
+                return JSON.parse(
+                    localStorage.getItem(userKey(prefix)) || "[]",
+                );
+            }
+
+            function saveData(prefix, data) {
+                localStorage.setItem(userKey(prefix), JSON.stringify(data));
+            }
+
+            /* =========================================================
+   학생 데이터
+========================================================= */
+
+            function getStudents() {
+                return getData("students");
+            }
+
+            /* =========================================================
+   학생 선택창에 학생 넣기
+========================================================= */
+
+            function fillStudentSelect(selectId) {
+                const select = document.getElementById(selectId);
+                const students = getStudents();
+
+                select.innerHTML =
+                    '<option value="">학생을 선택하세요</option>';
+
+                students.forEach((student) => {
+                    const option = document.createElement("option");
+
+                    option.value = student.id;
+                    option.textContent = student.name;
+
+                    select.appendChild(option);
+                });
+            }
+
+            function fillAllStudentSelects() {
+                [
+                    "scheduleStudent",
+                    "lessonRecordStudent",
+                    "homeworkStudent",
+                    "reportStudent",
+                    "paymentStudent",
+                ].forEach(fillStudentSelect);
+            }
+
+            /* =========================================================
+   학생 ID → 학생 이름
+========================================================= */
+
+            function studentName(studentId) {
+                const student = getStudents().find(
+                    (student) => student.id === Number(studentId),
+                );
+
+                return student ? student.name : "삭제된 학생";
+            }
+
+            /* =========================================================
+   페이지 이동
+========================================================= */
+
+            function showPage(pageId) {
+                pages.forEach((id) => {
+                    document.getElementById(id).classList.add("hidden");
+                });
+
+                document.getElementById(pageId).classList.remove("hidden");
+
+                document.querySelectorAll(".menu-button").forEach((button) => {
+                    button.classList.remove("active");
+                });
+
+                const menuMap = {
+                    dashboardPage: "dashboardMenu",
+
+                    studentPage: "studentMenu",
+
+                    schedulePage: "scheduleMenu",
+
+                    lessonRecordPage: "lessonRecordMenu",
+
+                    homeworkPage: "homeworkMenu",
+
+                    reportPage: "reportMenu",
+
+                    paymentPage: "paymentMenu",
+                };
+
+                document
+                    .getElementById(menuMap[pageId])
+                    .classList.add("active");
+
+                if (pageId === "studentPage") {
+                    showStudents();
+                }
+
+                if (pageId === "schedulePage") {
+                    showSchedules();
+                }
+
+                if (pageId === "lessonRecordPage") {
+                    showLessonRecords();
+                }
+
+                if (pageId === "homeworkPage") {
+                    showHomeworks();
+                }
+
+                if (pageId === "reportPage") {
+                    showReports();
+                }
+
+                if (pageId === "paymentPage") {
+                    showPayments();
+                }
+
+                fillAllStudentSelects();
+
+                updateDashboard();
+            }
+
+            /* =========================================================
+   대시보드 표시
+========================================================= */
+
+            function showDashboard() {
+                authContainer.classList.add("hidden");
+
+                dashboard.classList.remove("hidden");
+
+                document.getElementById("userName").textContent =
+                    currentUser.name + " 선생님";
+
+                showPage("dashboardPage");
+            }
+
+            /* =========================================================
+   회원가입 화면 이동
+========================================================= */
+
+            document
+                .getElementById("goSignup")
+                .addEventListener("click", () => {
+                    loginBox.classList.add("hidden");
+
+                    signupBox.classList.remove("hidden");
+                });
+
+            document.getElementById("goLogin").addEventListener("click", () => {
+                signupBox.classList.add("hidden");
+
+                loginBox.classList.remove("hidden");
+            });
+
+            /* =========================================================
+   회원가입
+========================================================= */
+
+            document
+                .getElementById("signupForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const name = document
+                        .getElementById("signupName")
+                        .value.trim();
+
+                    const email = document
+                        .getElementById("signupEmail")
+                        .value.trim();
+
+                    const password =
+                        document.getElementById("signupPassword").value;
+
+                    const confirm = document.getElementById(
+                        "signupPasswordConfirm",
+                    ).value;
+
+                    const error = document.getElementById("signupError");
+
+                    error.textContent = "";
+
+                    if (password !== confirm) {
+                        error.textContent = "비밀번호가 일치하지 않습니다.";
+
+                        return;
+                    }
+
+                    if (password.length < 4) {
+                        error.textContent = "비밀번호는 4자 이상 입력해주세요.";
+
+                        return;
+                    }
+
+                    const users = JSON.parse(
+                        localStorage.getItem("tutorUsers") || "[]",
+                    );
+
+                    if (users.some((user) => user.email === email)) {
+                        error.textContent = "이미 가입된 이메일입니다.";
+
+                        return;
+                    }
+
+                    users.push({
+                        id: Date.now(),
+
+                        name: name,
+
+                        email: email,
+
+                        password: password,
+                    });
+
+                    localStorage.setItem("tutorUsers", JSON.stringify(users));
+
+                    alert("회원가입이 완료되었습니다.");
+
+                    signupBox.classList.add("hidden");
+
+                    loginBox.classList.remove("hidden");
+
+                    document.getElementById("loginEmail").value = email;
+                });
+
+            /* =========================================================
+   로그인
+========================================================= */
+
+            document
+                .getElementById("loginForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const email = document
+                        .getElementById("loginEmail")
+                        .value.trim();
+
+                    const password =
+                        document.getElementById("loginPassword").value;
+
+                    const error = document.getElementById("loginError");
+
+                    const users = JSON.parse(
+                        localStorage.getItem("tutorUsers") || "[]",
+                    );
+
+                    const user = users.find(
+                        (user) =>
+                            user.email === email && user.password === password,
+                    );
+
+                    if (!user) {
+                        error.textContent =
+                            "이메일 또는 비밀번호가 올바르지 않습니다.";
+
+                        return;
+                    }
+
+                    error.textContent = "";
+
+                    currentUser = user;
+
+                    localStorage.setItem("currentTutor", JSON.stringify(user));
+
+                    showDashboard();
+                });
+
+            /* =========================================================
+   로그아웃
+========================================================= */
+
+            document
+                .getElementById("logoutButton")
+                .addEventListener("click", () => {
+                    currentUser = null;
+
+                    localStorage.removeItem("currentTutor");
+
+                    dashboard.classList.add("hidden");
+
+                    authContainer.classList.remove("hidden");
+
+                    loginBox.classList.remove("hidden");
+
+                    signupBox.classList.add("hidden");
+
+                    document.getElementById("loginPassword").value = "";
+                });
+
+            /* =========================================================
+   메뉴 버튼
+========================================================= */
+
+            document
+                .getElementById("dashboardMenu")
+                .addEventListener("click", () => {
+                    showPage("dashboardPage");
+                });
+
+            document
+                .getElementById("studentMenu")
+                .addEventListener("click", () => {
+                    showPage("studentPage");
+                });
+
+            document
+                .getElementById("scheduleMenu")
+                .addEventListener("click", () => {
+                    showPage("schedulePage");
+                });
+
+            document
+                .getElementById("lessonRecordMenu")
+                .addEventListener("click", () => {
+                    showPage("lessonRecordPage");
+                });
+
+            document
+                .getElementById("homeworkMenu")
+                .addEventListener("click", () => {
+                    showPage("homeworkPage");
+                });
+
+            document
+                .getElementById("reportMenu")
+                .addEventListener("click", () => {
+                    showPage("reportPage");
+                });
+
+            document
+                .getElementById("paymentMenu")
+                .addEventListener("click", () => {
+                    showPage("paymentPage");
+                });
+
+            /* =========================================================
+   학생 관리
+========================================================= */
+
+            document
+                .getElementById("studentForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const students = getStudents();
+
+                    students.push({
+                        id: Date.now(),
+
+                        name: document
+                            .getElementById("studentName")
+                            .value.trim(),
+
+                        subject: document
+                            .getElementById("studentSubject")
+                            .value.trim(),
+
+                        school: document
+                            .getElementById("studentSchool")
+                            .value.trim(),
+
+                        phone: document
+                            .getElementById("studentPhone")
+                            .value.trim(),
+                    });
+
+                    saveData("students", students);
+
+                    event.target.reset();
+
+                    showStudents();
+
+                    fillAllStudentSelects();
+
+                    updateDashboard();
+
+                    alert("학생이 추가되었습니다.");
+                });
+
+            function showStudents() {
+                const list = document.getElementById("studentList");
+
+                const students = getStudents();
+
+                if (!students.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">등록된 학생이 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = students
+                    .map(
+                        (student) => `
+
+            <div class="list-item">
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(student.name)}
+                    </div>
+
+                    <div class="item-detail">
+                        ${escapeHTML(student.subject)}
+                        ${
+                            student.school
+                                ? " · " + escapeHTML(student.school)
+                                : ""
+                        }
+                        ${
+                            student.phone
+                                ? " · " + escapeHTML(student.phone)
+                                : ""
+                        }
+                    </div>
+
+                </div>
+
+                <button
+                    class="delete-button"
+                    onclick="deleteStudent(${student.id})"
+                >
+                    삭제
+                </button>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function deleteStudent(id) {
+                if (!confirm("이 학생을 삭제할까요?")) {
+                    return;
+                }
+
+                saveData(
+                    "students",
+                    getStudents().filter((student) => student.id !== id),
+                );
+
+                showStudents();
+
+                fillAllStudentSelects();
+
+                updateDashboard();
+            }
+
+            /* =========================================================
+   수업 일정
+========================================================= */
+
+            document
+                .getElementById("scheduleForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const studentId = Number(
+                        document.getElementById("scheduleStudent").value,
+                    );
+
+                    const student = getStudents().find(
+                        (student) => student.id === studentId,
+                    );
+
+                    if (!student) {
+                        alert("학생을 선택해주세요.");
+
+                        return;
+                    }
+
+                    const schedules = getData("schedules");
+
+                    schedules.push({
+                        id: Date.now(),
+
+                        studentId: studentId,
+
+                        subject: document
+                            .getElementById("scheduleSubject")
+                            .value.trim(),
+
+                        date: document.getElementById("scheduleDate").value,
+
+                        time: document.getElementById("scheduleTime").value,
+                    });
+
+                    saveData("schedules", schedules);
+
+                    event.target.reset();
+
+                    showSchedules();
+
+                    updateDashboard();
+
+                    alert("수업 일정이 등록되었습니다.");
+                });
+
+            function showSchedules() {
+                const list = document.getElementById("scheduleList");
+
+                const schedules = getData("schedules").sort((a, b) =>
+                    (a.date + a.time).localeCompare(b.date + b.time),
+                );
+
+                if (!schedules.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">등록된 수업 일정이 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = schedules
+                    .map(
+                        (item) => `
+
+            <div class="list-item">
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(studentName(item.studentId))}
+                    </div>
+
+                    <div class="item-detail">
+                        ${escapeHTML(item.date)}
+                        ·
+                        ${escapeHTML(item.time)}
+                        ·
+                        ${escapeHTML(item.subject)}
+                    </div>
+
+                </div>
+
+                <button
+                    class="delete-button"
+                    onclick="deleteSchedule(${item.id})"
+                >
+                    삭제
+                </button>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function deleteSchedule(id) {
+                saveData(
+                    "schedules",
+                    getData("schedules").filter((item) => item.id !== id),
+                );
+
+                showSchedules();
+
+                updateDashboard();
+            }
+
+            /* =========================================================
+   수업 기록
+========================================================= */
+
+            document
+                .getElementById("lessonRecordForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const studentId = Number(
+                        document.getElementById("lessonRecordStudent").value,
+                    );
+
+                    if (
+                        !getStudents().some(
+                            (student) => student.id === studentId,
+                        )
+                    ) {
+                        alert("학생을 선택해주세요.");
+
+                        return;
+                    }
+
+                    const records = getData("lessonRecords");
+
+                    records.push({
+                        id: Date.now(),
+
+                        studentId: studentId,
+
+                        date: document.getElementById("lessonRecordDate").value,
+
+                        subject: document
+                            .getElementById("lessonRecordSubject")
+                            .value.trim(),
+
+                        understanding: document.getElementById(
+                            "lessonRecordUnderstanding",
+                        ).value,
+
+                        content: document
+                            .getElementById("lessonRecordContent")
+                            .value.trim(),
+
+                        memo: document
+                            .getElementById("lessonRecordMemo")
+                            .value.trim(),
+                    });
+
+                    saveData("lessonRecords", records);
+
+                    event.target.reset();
+
+                    showLessonRecords();
+
+                    alert("수업 기록이 저장되었습니다.");
+                });
+
+            function showLessonRecords() {
+                const list = document.getElementById("lessonRecordList");
+
+                const records = getData("lessonRecords").sort((a, b) =>
+                    b.date.localeCompare(a.date),
+                );
+
+                if (!records.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">저장된 수업 기록이 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = records
+                    .map(
+                        (item) => `
+
+            <div class="report-box">
+
+                <div class="report-header">
+
+                    <div>
+
+                        <h3>
+                            ${escapeHTML(studentName(item.studentId))}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(item.date)}
+                            ·
+                            ${escapeHTML(item.subject)}
+                        </p>
+
+                    </div>
+
+                    <span class="status ${
+                        item.understanding === "노력 필요"
+                            ? "status-late"
+                            : "status-ok"
+                    }">
+                        ${escapeHTML(item.understanding)}
+                    </span>
+
+                </div>
+
+
+                <div class="report-section">
+
+                    <h3>오늘 배운 내용</h3>
+
+                    <div class="report-note">
+                        ${escapeHTML(item.content)}
+                    </div>
+
+                </div>
+
+
+                <div class="report-section">
+
+                    <h3>선생님 메모</h3>
+
+                    <div class="report-note">
+                        ${escapeHTML(item.memo || "메모 없음")}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="item-actions"
+                    style="margin-top:18px;"
+                >
+
+                    <button
+                        class="delete-button"
+                        onclick="deleteLessonRecord(${item.id})"
+                    >
+                        삭제
+                    </button>
+
+                </div>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function deleteLessonRecord(id) {
+                saveData(
+                    "lessonRecords",
+                    getData("lessonRecords").filter((item) => item.id !== id),
+                );
+
+                showLessonRecords();
+            }
+
+            /* =========================================================
+   숙제 관리
+========================================================= */
+
+            document
+                .getElementById("homeworkForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const studentId = Number(
+                        document.getElementById("homeworkStudent").value,
+                    );
+
+                    if (
+                        !getStudents().some(
+                            (student) => student.id === studentId,
+                        )
+                    ) {
+                        alert("학생을 선택해주세요.");
+
+                        return;
+                    }
+
+                    const homeworks = getData("homeworks");
+
+                    homeworks.push({
+                        id: Date.now(),
+
+                        studentId: studentId,
+
+                        title: document
+                            .getElementById("homeworkTitle")
+                            .value.trim(),
+
+                        dueDate:
+                            document.getElementById("homeworkDueDate").value,
+
+                        description: document
+                            .getElementById("homeworkDescription")
+                            .value.trim(),
+
+                        status: "미제출",
+                    });
+
+                    saveData("homeworks", homeworks);
+
+                    event.target.reset();
+
+                    showHomeworks();
+
+                    updateDashboard();
+
+                    alert("숙제가 등록되었습니다.");
+                });
+
+            function showHomeworks() {
+                const list = document.getElementById("homeworkList");
+
+                const homeworks = getData("homeworks").sort((a, b) =>
+                    a.dueDate.localeCompare(b.dueDate),
+                );
+
+                if (!homeworks.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">등록된 숙제가 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = homeworks
+                    .map(
+                        (item) => `
+
+            <div class="list-item">
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(item.title)}
+                    </div>
+
+                    <div class="item-detail">
+                        ${escapeHTML(studentName(item.studentId))}
+                        · 마감
+                        ${escapeHTML(item.dueDate)}
+                        ${
+                            item.description
+                                ? " · " + escapeHTML(item.description)
+                                : ""
+                        }
+                    </div>
+
+                    <span class="status ${
+                        item.status === "제출완료" ? "status-ok" : "status-wait"
+                    }">
+                        ${item.status}
+                    </span>
+
+                </div>
+
+
+                <div class="item-actions">
+
+                    <button
+                        class="small-button"
+                        onclick="toggleHomework(${item.id})"
+                    >
+                        ${
+                            item.status === "미제출"
+                                ? "제출 완료"
+                                : "미제출로 변경"
+                        }
+                    </button>
+
+                    <button
+                        class="delete-button"
+                        onclick="deleteHomework(${item.id})"
+                    >
+                        삭제
+                    </button>
+
+                </div>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function toggleHomework(id) {
+                const homeworks = getData("homeworks");
+
+                const item = homeworks.find((homework) => homework.id === id);
+
+                if (item) {
+                    item.status =
+                        item.status === "미제출" ? "제출완료" : "미제출";
+                }
+
+                saveData("homeworks", homeworks);
+
+                showHomeworks();
+
+                updateDashboard();
+            }
+
+            function deleteHomework(id) {
+                saveData(
+                    "homeworks",
+                    getData("homeworks").filter((item) => item.id !== id),
+                );
+
+                showHomeworks();
+
+                updateDashboard();
+            }
+
+            /* =========================================================
+   학부모 리포트
+========================================================= */
+
+            document
+                .getElementById("reportForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const studentId = Number(
+                        document.getElementById("reportStudent").value,
+                    );
+
+                    if (
+                        !getStudents().some(
+                            (student) => student.id === studentId,
+                        )
+                    ) {
+                        alert("학생을 선택해주세요.");
+
+                        return;
+                    }
+
+                    const reports = getData("reports");
+
+                    reports.push({
+                        id: Date.now(),
+
+                        studentId: studentId,
+
+                        date: document.getElementById("reportDate").value,
+
+                        topic: document
+                            .getElementById("reportTopic")
+                            .value.trim(),
+
+                        evaluation:
+                            document.getElementById("reportEvaluation").value,
+
+                        memo: document
+                            .getElementById("reportMemo")
+                            .value.trim(),
+                    });
+
+                    saveData("reports", reports);
+
+                    event.target.reset();
+
+                    showReports();
+
+                    alert("학부모 리포트가 저장되었습니다.");
+                });
+
+            function showReports() {
+                const list = document.getElementById("reportList");
+
+                const reports = getData("reports").sort((a, b) =>
+                    b.date.localeCompare(a.date),
+                );
+
+                if (!reports.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">저장된 학부모 리포트가 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = reports
+                    .map(
+                        (item) => `
+
+            <div class="report-box">
+
+                <div class="report-header">
+
+                    <div>
+
+                        <h3>
+                            ${escapeHTML(studentName(item.studentId))}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(item.date)}
+                        </p>
+
+                    </div>
+
+                    <span class="status ${
+                        item.evaluation === "노력 필요"
+                            ? "status-late"
+                            : "status-ok"
+                    }">
+                        ${escapeHTML(item.evaluation)}
+                    </span>
+
+                </div>
+
+
+                <div class="report-section">
+
+                    <h3>학습 주제</h3>
+
+                    <p>
+                        ${escapeHTML(item.topic)}
+                    </p>
+
+                </div>
+
+
+                <div class="report-section">
+
+                    <h3>선생님 메모</h3>
+
+                    <div class="report-note">
+                        ${escapeHTML(item.memo)}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="item-actions"
+                    style="margin-top:18px;"
+                >
+
+                    <button
+                        class="delete-button"
+                        onclick="deleteReport(${item.id})"
+                    >
+                        삭제
+                    </button>
+
+                </div>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function deleteReport(id) {
+                saveData(
+                    "reports",
+                    getData("reports").filter((item) => item.id !== id),
+                );
+
+                showReports();
+            }
+
+            /* =========================================================
+   결제 관리
+========================================================= */
+
+            document
+                .getElementById("paymentForm")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    const studentId = Number(
+                        document.getElementById("paymentStudent").value,
+                    );
+
+                    if (
+                        !getStudents().some(
+                            (student) => student.id === studentId,
+                        )
+                    ) {
+                        alert("학생을 선택해주세요.");
+
+                        return;
+                    }
+
+                    const payments = getData("payments");
+
+                    payments.push({
+                        id: Date.now(),
+
+                        studentId: studentId,
+
+                        amount: Number(
+                            document.getElementById("paymentAmount").value,
+                        ),
+
+                        dueDate:
+                            document.getElementById("paymentDueDate").value,
+
+                        status: document.getElementById("paymentStatus").value,
+                    });
+
+                    saveData("payments", payments);
+
+                    event.target.reset();
+
+                    showPayments();
+
+                    updateDashboard();
+
+                    alert("결제 내역이 등록되었습니다.");
+                });
+
+            function showPayments() {
+                const list = document.getElementById("paymentList");
+
+                const payments = getData("payments").sort((a, b) =>
+                    a.dueDate.localeCompare(b.dueDate),
+                );
+
+                if (!payments.length) {
+                    list.innerHTML =
+                        '<div class="empty-message">등록된 결제 내역이 없습니다.</div>';
+
+                    return;
+                }
+
+                list.innerHTML = payments
+                    .map(
+                        (item) => `
+
+            <div class="list-item">
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(studentName(item.studentId))}
+                    </div>
+
+                    <div class="item-detail">
+
+                        결제 예정일:
+                        ${escapeHTML(item.dueDate)}
+
+                        ·
+
+                        <span class="money">
+                            ${item.amount.toLocaleString()}원
+                        </span>
+
+                    </div>
+
+                    <span class="status ${
+                        item.status === "결제완료" ? "status-ok" : "status-wait"
+                    }">
+                        ${item.status}
+                    </span>
+
+                </div>
+
+
+                <div class="item-actions">
+
+                    <button
+                        class="small-button"
+                        onclick="togglePayment(${item.id})"
+                    >
+                        ${item.status === "미납" ? "결제완료" : "미납으로 변경"}
+                    </button>
+
+                    <button
+                        class="delete-button"
+                        onclick="deletePayment(${item.id})"
+                    >
+                        삭제
+                    </button>
+
+                </div>
+
+            </div>
+
+        `,
+                    )
+                    .join("");
+            }
+
+            function togglePayment(id) {
+                const payments = getData("payments");
+
+                const item = payments.find((payment) => payment.id === id);
+
+                if (item) {
+                    item.status = item.status === "미납" ? "결제완료" : "미납";
+                }
+
+                saveData("payments", payments);
+
+                showPayments();
+
+                updateDashboard();
+            }
+
+            function deletePayment(id) {
+                saveData(
+                    "payments",
+                    getData("payments").filter((item) => item.id !== id),
+                );
+
+                showPayments();
+
+                updateDashboard();
+            }
+
+            /* =========================================================
+   대시보드 숫자 업데이트
+========================================================= */
+
+            function updateDashboard() {
+                if (!currentUser) {
+                    return;
+                }
+
+                const today = new Date().toISOString().split("T")[0];
+
+                const students = getStudents();
+
+                const schedules = getData("schedules");
+
+                const homeworks = getData("homeworks");
+
+                const payments = getData("payments");
+
+                document.getElementById("studentCount").textContent =
+                    students.length + "명";
+
+                document.getElementById("todayScheduleCount").textContent =
+                    schedules.filter((schedule) => schedule.date === today)
+                        .length + "개";
+
+                document.getElementById("pendingHomeworkCount").textContent =
+                    homeworks.filter((homework) => homework.status === "미제출")
+                        .length + "개";
+
+                document.getElementById("unpaidPaymentCount").textContent =
+                    payments.filter((payment) => payment.status === "미납")
+                        .length + "건";
+            }
+
+            /* =========================================================
+   사용자 입력을 화면에 안전하게 표시
+========================================================= */
+
+            function escapeHTML(value) {
+                return String(value ?? "")
+                    .replaceAll("&", "&amp;")
+
+                    .replaceAll("<", "&lt;")
+
+                    .replaceAll(">", "&gt;")
+
+                    .replaceAll('"', "&quot;")
+
+                    .replaceAll("'", "&#039;");
+            }
+
+            /* =========================================================
+   새로고침 후 로그인 유지
+========================================================= */
+
+            window.addEventListener("load", () => {
+                const savedUser = localStorage.getItem("currentTutor");
+
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+
+                    showDashboard();
+                }
+            });
+        </script>
+    </body>
+</html>
